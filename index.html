@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Hangman Game (by h.yueksel)</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; background: #222; color: #eee; margin: 0; padding: 0; }
+        .game-container { max-width: 500px; margin: 40px auto; background: #333; border-radius: 10px; padding: 30px; box-shadow: 0 0 15px #111; }
+        .c-gold { color: gold; }
+        .f-weight-100 { font-weight: 100; }
+        .t-shadow { text-shadow: 1px 1px 5px #000; }
+        .hangman-svg { display: block; margin: 0 auto 20px; width: 200px; height: 200px; }
+        .hangman-part { stroke: #eee; stroke-width: 4; fill: none; }
+        .word-display { font-size: 2em; letter-spacing: 0.4em; margin: 20px 0; text-align: center; }
+        .letter-box { display: inline-block; width: 1.2em; border-bottom: 2px solid #eee; margin: 0 0.1em; }
+        .keyboard { text-align: center; margin: 20px 0; }
+        .keyboard button { margin: 2px; width: 36px; height: 36px; font-size: 1.1em; border-radius: 6px; border: none; background: #555; color: #fff; cursor: pointer; }
+        .keyboard button:disabled { background: #888; color: #222; cursor: not-allowed; }
+        .status { text-align: center; margin-top: 20px; }
+        .restart-btn { margin-top: 10px; padding: 8px 18px; font-size: 1em; border: none; border-radius: 5px; background: gold; color: #222; cursor: pointer; }
+        .game-over { background: #440000; }
+    </style>
+</head>
+<body ng-app="hangmanApp">
+    <div ng-controller="HangmanController as ctrl">
+        <div class="game-container" ng-class="{'game-over': ctrl.gameOver && !ctrl.win}">
+            <h1 class="c-gold f-weight-100 t-shadow">Hang Man Game (by h.yueksel)</h1>
+            <!-- Hangman-Grafik -->
+            <svg class="hangman-svg" viewBox="0 0 200 200">
+                <path class="hangman-part" ng-if="ctrl.errors >= 1" d="M20 180 L180 180" />
+                <path class="hangman-part" ng-if="ctrl.errors >= 2" d="M100 180 L100 20" />
+                <path class="hangman-part" ng-if="ctrl.errors >= 3" d="M100 20 L150 20" />
+                <path class="hangman-part" ng-if="ctrl.errors >= 4" d="M150 20 L150 40" />
+                <circle class="hangman-part" ng-if="ctrl.errors >= 5" cx="150" cy="60" r="20" />
+                <path class="hangman-part" ng-if="ctrl.errors >= 6" d="M150 80 L150 120" />
+                <path class="hangman-part" ng-if="ctrl.errors >= 7" d="M150 90 L130 70" />
+                <path class="hangman-part" ng-if="ctrl.errors >= 8" d="M150 90 L170 70" />
+                <path class="hangman-part" ng-if="ctrl.errors >= 9" d="M150 120 L130 150" />
+                <path class="hangman-part" ng-if="ctrl.errors >= 10" d="M150 120 L170 150" />
+            </svg>
+            <!-- Wortanzeige -->
+            <div class="word-display">
+                <span ng-repeat="letter in ctrl.wordLetters" class="letter-box">
+                    {{ ctrl.gameOver ? letter.char : (letter.guessed ? letter.char : '_') }}
+                </span>
+            </div>
+            <!-- Tastatur -->
+            <div class="keyboard">
+                <button ng-repeat="letter in ctrl.alphabet"
+                    ng-disabled="ctrl.guessedLetters.includes(letter) || ctrl.gameOver"
+                    ng-click="ctrl.guessLetter(letter)">
+                    {{letter}}
+                </button>
+            </div>
+            <!-- Spielstatus -->
+            <div class="status">
+                <p>Fehler: {{ctrl.errors}}/10</p>
+                <p ng-if="ctrl.gameOver">
+                    {{ctrl.win ? '🎉 Gewonnen!' : '💀 Verloren! Lösung: ' + ctrl.originalWord}}
+                </p>
+                <button class="restart-btn" ng-click="ctrl.init()" ng-if="ctrl.gameOver">
+                    🔄 Neustart
+                </button>
+            </div>
+        </div>
+    </div>
+    <script>
+        angular.module('hangmanApp', [])
+            .controller('HangmanController', ['$document', '$scope', function ($document, $scope) {
+                const vm = this;
+                vm.wordList = [
+                    "COMPUTER", "PROGRAMMIERUNG", "ALGORITHMUS",
+                    "DATENBANK", "BENUTZER", "ENTWICKLUNG",
+                    "SCHNITTSTELLE", "NETZWERK", "VERSCHLUESSELUNG",
+                    "BIBLIOTHEK", "FRAMEWORK", "ANWENDUNG",
+                    "PROZESSOR", "SPEICHER", "BETRIEBSSYSTEM",
+                    "KOMPILIERER", "VARIABLE", "FUNKTION",
+                    "OBJEKT", "INSTANZ"
+                ];
+                vm.init = () => {
+                    vm.originalWord = vm.wordList[
+                        Math.floor(Math.random() * vm.wordList.length)
+                    ].toUpperCase();
+                    vm.wordLetters = vm.originalWord.split('').map(c => ({
+                        char: c,
+                        guessed: false
+                    }));
+                    vm.alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+                    vm.guessedLetters = [];
+                    vm.errors = 0;
+                    vm.gameOver = false;
+                    vm.win = false;
+                };
+                vm.guessLetter = function (letter) {
+                    if (vm.gameOver) return;
+                    vm.guessedLetters.push(letter);
+                    let correct = false;
+                    vm.wordLetters.forEach(l => {
+                        if (l.char === letter) {
+                            l.guessed = true;
+                            correct = true;
+                        }
+                    });
+                    if (!correct) {
+                        vm.errors++;
+                        if (vm.errors >= 10) {
+                            vm.gameOver = true;
+                        }
+                    } else {
+                        vm.win = vm.wordLetters.every(l => l.guessed);
+                        vm.gameOver = vm.win;
+                    }
+                };
+                vm.init();
+                $document.on('keydown', function (event) {
+                    var key = event.key.toUpperCase();
+                    if (vm.alphabet.includes(key) &&
+                        !vm.guessedLetters.includes(key) &&
+                        !vm.gameOver) {
+                        $scope.$apply(function () {
+                            vm.guessLetter(key);
+                        });
+                    }
+                });
+            }]);
+    </script>
+</body>
+</html>
