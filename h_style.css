@@ -114,18 +114,18 @@ body>div.ng-scope {
 }
 
 .restart-btn {
-  padding: 2% 9%;
-  background: #e74c3c;
-  border: none;
-  border-radius: 8px;
-  color: #ffffff;
-  cursor: pointer;
-  font-size: 1.5rem;
-  position: absolute;
-  top: 74%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  box-shadow: 0px 3px 40px 16px black;
+    padding: 2% 9% !important;
+    background: #e74c3c !important;
+    border: none;
+    border-radius: 8px !important;
+    color: #ffffff !important;
+    cursor: pointer !important;
+    font-size: 1.5rem !important;
+    position: absolute !important;
+    top: 74% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    box-shadow: 0px 3px 40px 16px black !important;
 }
 
 /* Bildschirm-Ruckeln Animation mit Zirkulation */
