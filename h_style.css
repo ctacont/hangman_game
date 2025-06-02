@@ -9,6 +9,37 @@
         * {
           margin: 0;
         }
+
+
+            body {
+                display: flex;
+                margin: auto !important;
+                /* width: 100% !important; */
+                height: 100vh;
+                align-items: center;
+                background: #2c3e50 !important;
+                font-family: 'Segoe UI', system-ui;
+            }
+            
+            body > div.ng-scope {
+                width: 100%;
+                max-width: 925px;
+                margin: auto !important;
+            }
+            
+            .game-container {
+                background: rgba(255, 255, 255, 0.1);
+                padding: 2rem;
+                border-radius: 20px;
+                backdrop-filter: blur(10px);
+                width: 90%;
+                text-align: center;
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+                background: url(https://png.pngtree.com/background/20250110/original/pngtree-vintage-anthracite-wallpaper-a-textured-background-of-old-dark-stone-on-picture-image_13475840.jpg);
+                background-size: cover;
+                margin: auto;
+            }
+
         .c-gold {
             color: #ddca7e;
         }
