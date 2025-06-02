@@ -170,3 +170,25 @@
             transform-origin: center center;
             backface-visibility: hidden;
         }
+
+            @media (max-height: 800px) {
+              .game-container {
+                max-height: 100vh;
+                padding: 10px;
+              }
+              .hangman-svg {
+                height: 230px;
+                width: 220px;
+              }
+              .word-display {
+                font-size: 1.2em;
+              }
+              .keyboard button {
+                width: auto;
+                height: auto;
+                font-size: 20px;
+                padding: 9px 6px 6px 6px;
+              }
+            }
+
+
